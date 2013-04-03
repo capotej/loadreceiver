@@ -20,7 +20,7 @@ import io.netty.handler.codec.http.HttpHeaders.Names._
 import io.netty.handler.codec.http.HttpResponseStatus._
 import io.netty.handler.codec.http.HttpVersion._
 
-class HttpStaticFileServerHandler extends ChannelInboundMessageHandlerAdapter[FullHttpRequest] {
+class HelloWorldServerHandler extends ChannelInboundMessageHandlerAdapter[FullHttpRequest] {
 
   override def messageReceived(ctx: ChannelHandlerContext, request: FullHttpRequest) {
     if (!request.getDecoderResult().isSuccess()) {
@@ -41,7 +41,7 @@ class HttpStaticFileServerHandler extends ChannelInboundMessageHandlerAdapter[Fu
 }
 
 
-class HttpStaticFileServerInitializer extends ChannelInitializer[SocketChannel] {
+class HelloWorldServerInitializer extends ChannelInitializer[SocketChannel] {
   override def initChannel(ch: SocketChannel) {
     val pipeline = ch.pipeline()
 
@@ -50,7 +50,7 @@ class HttpStaticFileServerInitializer extends ChannelInitializer[SocketChannel] 
     pipeline.addLast("encoder", new HttpResponseEncoder())
     pipeline.addLast("chunkedWriter", new ChunkedWriteHandler())
 
-    pipeline.addLast("handler", new HttpStaticFileServerHandler())
+    pipeline.addLast("handler", new HelloWorldServerHandler())
   }
 }
 
@@ -62,7 +62,7 @@ object App {
     try {
       val b = new ServerBootstrap()
       b.group(bossGroup, workerGroup).channel(classOf[NioServerSocketChannel])
-              .childHandler(new HttpStaticFileServerInitializer())
+              .childHandler(new HelloWorldServerInitializer())
 
       b.bind(8080).sync().channel().closeFuture().sync()
     } finally {
